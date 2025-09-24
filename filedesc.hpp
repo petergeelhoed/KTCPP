@@ -8,7 +8,7 @@ namespace filedesc
 class FileDesc
 {
   public:
-    explicit FileDesc();
+    FileDesc(int id);
     ~FileDesc();
 
     FileDesc(const FileDesc& other) = delete;
@@ -16,9 +16,9 @@ class FileDesc
 
     [[nodiscard]] bool write(const std::vector<std::byte>& data) const;
     [[nodiscard]] std::vector<std::byte> read() const;
-    [[nodiscard]] bool open(const std::string& file, int mode);
 
   private:
     int m_id = -1;
 };
+[[nodiscard]] FileDesc open(const std::string& file, int mode);
 } // namespace filedesc
