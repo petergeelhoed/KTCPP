@@ -4,7 +4,6 @@
 #include <unistd.h>
 
 #include <array>
-#include <cstddef>
 #include <cstdio>
 #include <iostream>
 #include <stdexcept>
@@ -29,12 +28,60 @@ FileDesc::~FileDesc()
     }
 }
 
+FileDesc::FileDesc(const FileDesc& other) : m_id(dup(other.m_id))
+{
+    if (m_id == -1)
+    {
+        throw std::runtime_error("dup failed in copy constructor");
+    }
+}
+
+FileDesc& FileDesc::operator=(const FileDesc& rhs)
+{
+    if (this != &rhs)
+    {
+        if (m_id != -1)
+        {
+            close(m_id);
+        }
+
+        m_id = dup(rhs.m_id);
+        if (m_id == -1)
+        {
+            throw std::runtime_error("dup failed in copy assignment");
+        }
+    }
+    return *this;
+}
+
+FileDesc::FileDesc(FileDesc&& other) noexcept : m_id(other.m_id)
+{
+    // make rhs invalid
+    other.m_id = -1;
+}
+
+FileDesc& FileDesc::operator=(FileDesc&& rhs) noexcept
+{
+    if (this != &rhs)
+    {
+        if (m_id != -1)
+        {
+            close(m_id);
+        }
+
+        m_id = rhs.m_id;
+        // make rhs invalid
+        rhs.m_id = -1;
+    }
+    return *this;
+}
+
 std::vector<std::byte> FileDesc::read() const
 {
     std::vector<std::byte> data;
     if (m_id != -1)
     {
-        const size_t BUFFER_SIZE = 256;
+        constexpr size_t BUFFER_SIZE = 256;
         std::array<std::byte, BUFFER_SIZE> buffer = {};
         long int readBytes = 0;
         while ((readBytes = ::read(m_id, buffer.data(), BUFFER_SIZE)) > 0)
@@ -52,8 +99,12 @@ std::vector<std::byte> FileDesc::read() const
 
 bool FileDesc::write(const std::vector<std::byte>& data) const
 {
-    auto writtenBytes = ::write(m_id, data.data(), data.size());
-    return (data.size() == static_cast<size_t>(writtenBytes));
+    if (m_id != -1)
+    {
+        auto writtenBytes = ::write(m_id, data.data(), data.size());
+        return (data.size() == static_cast<size_t>(writtenBytes));
+    }
+    return -1;
 }
 
 FileDesc FileDesc::open(const std::string& file, int mode)
