@@ -9,7 +9,7 @@
 int main()
 {
     {
-        auto fd = filedesc::open("myfile", O_WRONLY | O_CREAT);
+        auto fd = filedesc::FileDesc::open("myfile", O_WRONLY | O_CREAT);
 
         const std::vector<std::byte> byteVector = {std::byte{'h'},
                                                    std::byte{'e'},
@@ -34,7 +34,7 @@ int main()
     // this is impossible You need to use the open
     // FileDesc fd5(4);
 
-    auto fd2 = filedesc::open("myfile", O_RDONLY);
+    auto fd2 = filedesc::FileDesc::open("myfile", O_RDONLY);
     auto data = fd2.read();
     for (const auto& iter : data)
     {

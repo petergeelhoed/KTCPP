@@ -56,9 +56,7 @@ bool FileDesc::write(const std::vector<std::byte>& data) const
     return (data.size() == static_cast<size_t>(writtenBytes));
 }
 
-// outside of class factory
-
-FileDesc open(const std::string& file, int mode)
+FileDesc FileDesc::open(const std::string& file, int mode)
 {
     // think about enum for mode
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg,hicpp-vararg)
@@ -67,6 +65,6 @@ FileDesc open(const std::string& file, int mode)
     {
         throw std::runtime_error("Failed to open file");
     }
-    return {file_id};
+    return FileDesc(file_id);
 }
 } // namespace filedesc
