@@ -20,13 +20,7 @@ FileDesc::FileDesc(int file_id) : m_id(file_id)
     }
 }
 
-FileDesc::~FileDesc()
-{
-    if (m_id != -1)
-    {
-        close(m_id);
-    }
-}
+FileDesc::~FileDesc() { close_fd(); }
 
 FileDesc::FileDesc(const FileDesc& other) : m_id(dup(other.m_id))
 {
@@ -40,16 +34,15 @@ FileDesc& FileDesc::operator=(const FileDesc& rhs)
 {
     if (this != &rhs)
     {
-        if (m_id != -1)
-        {
-            close(m_id);
-        }
-
-        m_id = dup(rhs.m_id);
-        if (m_id == -1)
+        int file_id = dup(rhs.m_id);
+        if (file_id == -1)
         {
             throw std::runtime_error("dup failed in copy assignment");
         }
+
+        // only close and assign if dup succeeded
+        close_fd();
+        m_id = file_id;
     }
     return *this;
 }
@@ -57,6 +50,8 @@ FileDesc& FileDesc::operator=(const FileDesc& rhs)
 FileDesc::FileDesc(FileDesc&& other) noexcept : m_id(other.m_id)
 {
     // make rhs invalid
+    // no need to close as that will be done in the destructor of the new
+    // object
     other.m_id = -1;
 }
 
@@ -64,16 +59,27 @@ FileDesc& FileDesc::operator=(FileDesc&& rhs) noexcept
 {
     if (this != &rhs)
     {
-        if (m_id != -1)
-        {
-            close(m_id);
-        }
+        close_fd();
 
         m_id = rhs.m_id;
         // make rhs invalid
+        // no need to close as that will be done in the destriuctor of the new
+        // object
         rhs.m_id = -1;
     }
     return *this;
+}
+
+void FileDesc::close_fd() noexcept
+{
+    if (m_id != -1)
+    {
+        if (close(m_id) != 0)
+        {
+            perror("Error closing file");
+        }
+        m_id = -1;
+    }
 }
 
 std::vector<std::byte> FileDesc::read() const

@@ -23,6 +23,7 @@ class FileDesc final
 
     // this is the only way to construct a FileDesc
     [[nodiscard]] static FileDesc open(const std::string& file, int mode);
+    void close_fd() noexcept;
 
   private:
     explicit FileDesc(int file_id);
