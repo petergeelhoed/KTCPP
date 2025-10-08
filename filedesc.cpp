@@ -105,12 +105,26 @@ std::vector<std::byte> FileDesc::read() const
 
 bool FileDesc::write(const std::vector<std::byte>& data) const
 {
-    if (m_id != -1)
+    if (m_id == -1)
     {
-        auto writtenBytes = ::write(m_id, data.data(), data.size());
-        return (data.size() == static_cast<size_t>(writtenBytes));
+        errno = EINVAL;
+        return false;
     }
-    return -1;
+
+    auto iter = data.begin();
+    auto end = data.end();
+
+    while (iter != end)
+    {
+        ssize_t written = ::write(m_id, &(*iter), std::distance(iter, end));
+        if (written == -1)
+        {
+            return false;
+        }
+        std::advance(iter, written);
+    }
+
+    return true;
 }
 
 FileDesc FileDesc::open(const std::string& file, int mode)
