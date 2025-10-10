@@ -14,8 +14,7 @@
 namespace filedesc
 {
 
-FileDesc::FileDesc(int id) :
-  m_id(id)
+FileDesc::FileDesc(int id) : m_id(id)
 {
     if (id == -1)
     {
@@ -68,33 +67,6 @@ FileDesc open(const std::string& file, int mode)
     {
         throw std::runtime_error("Failed to open file");
     }
-    return { id };
+    return {id};
 }
 } // namespace filedesc
-
-int main()
-{
-    {
-        auto fd = filedesc::open("myfile", O_WRONLY | O_CREAT);
-
-        const std::vector<std::byte> byteVector = {
-            std::byte{ 'h' }, std::byte{ 'e' }, std::byte{ 'l' }, std::byte{ 'l' },
-            std::byte{ 'o' }, std::byte{ ' ' }, std::byte{ 'w' }, std::byte{ 'o' },
-            std::byte{ 'r' }, std::byte{ 'l' }, std::byte{ 'd' }, std::byte{ '\n' }
-        };
-
-        if (!fd.write(byteVector))
-        {
-            perror("writefailure");
-            exit(-1);
-        }
-    } // this closes the fd;
-      // but if I don't I can still read from it
-
-    auto fd2 = filedesc::open("myfile", O_RDONLY);
-    auto data = fd2.read();
-    for (auto& it : data)
-    {
-        std::cout << static_cast<char>(it);
-    }
-}
