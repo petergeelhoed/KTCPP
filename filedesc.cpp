@@ -1,22 +1,21 @@
 #include "filedesc.hpp"
 
+#include <fcntl.h>
+#include <unistd.h>
+
 #include <array>
 #include <cstddef>
 #include <cstdio>
-#include <cstdlib>
-#include <fcntl.h>
 #include <iostream>
 #include <stdexcept>
 #include <string>
-#include <unistd.h>
 #include <vector>
 
 namespace filedesc
 {
-
-FileDesc::FileDesc(int id) : m_id(id)
+FileDesc::FileDesc(int file_id) : m_id(file_id)
 {
-    if (id == -1)
+    if (file_id == -1)
     {
         throw std::runtime_error("Cannot create FileDesc for -1");
     }
@@ -62,11 +61,12 @@ bool FileDesc::write(const std::vector<std::byte>& data) const
 FileDesc open(const std::string& file, int mode)
 {
     // think about enum for mode
-    const int id = ::open(file.c_str(), mode, 0644);
-    if (id == -1)
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg,hicpp-vararg)
+    const int file_id = ::open(file.c_str(), mode, 0644);
+    if (file_id == -1)
     {
         throw std::runtime_error("Failed to open file");
     }
-    return {id};
+    return {file_id};
 }
 } // namespace filedesc
