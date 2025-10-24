@@ -1,4 +1,3 @@
-
 #include <algorithm>
 #include <iostream>
 #include <memory>
@@ -10,15 +9,26 @@
 class XmlNode : public std::enable_shared_from_this<XmlNode>
 {
   public:
+    // never use this!
+    // use XmlNode::create to always make it with make_shared
+    // somehow I cannot make this private
+    //  With GCC/libstdc++, std::make_shared<T>(...) requires T's constructor to
+    //  be public.
+    explicit XmlNode(std::string name) : m_name(std::move(name)) {}
+
     using Ptr = std::shared_ptr<XmlNode>;
 
-    explicit XmlNode(std::string name) : m_name(std::move(name)) {}
+    // Factory: static member, calls constructor
+    static Ptr create(const std::string& name)
+    {
+        return std::make_shared<XmlNode>(name);
+    }
 
     ~XmlNode()
     {
         m_parent.reset();
         std::cout << "destroying " << m_name << "\n";
-    };
+    }
 
     // should be non copyable and non movable
     XmlNode(const XmlNode& other) = delete;
@@ -28,7 +38,7 @@ class XmlNode : public std::enable_shared_from_this<XmlNode>
 
     void addChild(const std::string& name)
     {
-        auto child = std::make_shared<XmlNode>(std::move(name));
+        auto child = create(name);
         addChild(child);
     }
 
@@ -80,7 +90,6 @@ class XmlNode : public std::enable_shared_from_this<XmlNode>
             std::ranges::find_if(m_children, [&name](const auto& child) {
                 return child->getName() == name;
             });
-
         return found != m_children.end() ? *found : nullptr;
     }
 
@@ -90,6 +99,7 @@ class XmlNode : public std::enable_shared_from_this<XmlNode>
 
     const std::string& getName() const { return m_name; }
 
+  protected:
     bool isAncestor(const Ptr& node) const
     {
         auto current = getParent();

@@ -4,11 +4,11 @@
 
 int main()
 {
-    auto root = std::make_shared<XmlNode>("root");
-    auto child2 = std::make_shared<XmlNode>("child2");
+    auto root = XmlNode::create("root");
+    auto child2 = XmlNode::create("child2");
 
     {
-        auto child1 = std::make_shared<XmlNode>("child1");
+        auto child1 = XmlNode::create("child1");
         root->addChild(child1);
         root->addChild(child2);
         root->addChild("child3");
@@ -99,7 +99,7 @@ int main()
 
     // circular reference test
 
-    auto child4 = std::make_shared<XmlNode>("child4");
+    auto child4 = XmlNode::create("child4");
     root->addChild(child4);
     try
     {
