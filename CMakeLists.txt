@@ -1,19 +1,16 @@
 cmake_minimum_required(VERSION 3.10)
 
-# Set the project name and version
 project(filedesc_project VERSION 1.0)
 
-# Set C++ standard
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Enable compile_commands.json generation
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Add the executable
-add_executable(test test.cpp filedesc.cpp )
-add_executable(xmltest testxml.cpp )
+add_executable(test test.cpp filedesc.cpp)
+add_executable(xmltest xmlnode.cpp testxml.cpp)
 
-# Include current directory for headers
+target_compile_options(xmltest PRIVATE -Wall -Wextra -Wpedantic -Werror)
+
 target_include_directories(test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-

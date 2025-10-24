@@ -8,15 +8,15 @@
 
 class XmlNode : public std::enable_shared_from_this<XmlNode>
 {
+    using Ptr = std::shared_ptr<XmlNode>;
+
   public:
     // never use this!
     // use XmlNode::create to always make it with make_shared
     // somehow I cannot make this private
     //  With GCC/libstdc++, std::make_shared<T>(...) requires T's constructor to
     //  be public.
-    explicit XmlNode(std::string name) : m_name(std::move(name)) {}
-
-    using Ptr = std::shared_ptr<XmlNode>;
+    explicit XmlNode(std::string name);
 
     // Factory: static member, calls constructor
     static Ptr create(const std::string& name)
@@ -24,74 +24,22 @@ class XmlNode : public std::enable_shared_from_this<XmlNode>
         return std::make_shared<XmlNode>(name);
     }
 
-    ~XmlNode()
-    {
-        m_parent.reset();
-        std::cout << "destroying " << m_name << "\n";
-    }
-
+    ~XmlNode();
     // should be non copyable and non movable
     XmlNode(const XmlNode& other) = delete;
     XmlNode& operator=(const XmlNode& rhs) = delete;
     XmlNode(XmlNode&& other) noexcept = delete;
     XmlNode& operator=(XmlNode&& other) noexcept = delete;
 
-    void addChild(const std::string& name)
-    {
-        auto child = create(name);
-        addChild(child);
-    }
+    void addChild(const std::string& name);
 
-    void addChild(Ptr child)
-    {
-        // check if unique name
-        if (nullptr != getChild(child->getName()))
-        {
-            throw std::runtime_error("Child already exists in this node.");
-        }
-        if (isAncestor(child))
-        {
-            throw std::runtime_error(
-                "Cannot add ancestor as a child, you pervert.");
-        }
+    void addChild(Ptr child);
 
-        // set myself as a weak parent ptr in the child
-        child->m_parent = shared_from_this();
-        m_children.push_back(std::move(child));
-    }
+    bool deleteChild(const std::string& name);
 
-    bool deleteChild(const std::string& name)
-    {
-        auto child = getChild(name);
-        if (child != nullptr)
-        {
-            return deleteChild(child);
-        }
-        return false;
-    }
+    bool deleteChild(const Ptr& childToDelete);
 
-    bool deleteChild(const Ptr& childToDelete)
-    {
-        auto child =
-            std::find(m_children.begin(), m_children.end(), childToDelete);
-        if (child != m_children.end())
-        {
-            // remove reference to myself
-            (*child)->m_parent.reset();
-            m_children.erase(child);
-            return true;
-        }
-        return false;
-    }
-
-    Ptr getChild(const std::string& name) const
-    {
-        auto found =
-            std::ranges::find_if(m_children, [&name](const auto& child) {
-                return child->getName() == name;
-            });
-        return found != m_children.end() ? *found : nullptr;
-    }
+    Ptr getChild(const std::string& name) const;
 
     Ptr getParent() const { return m_parent.lock(); }
 
@@ -100,19 +48,7 @@ class XmlNode : public std::enable_shared_from_this<XmlNode>
     const std::string& getName() const { return m_name; }
 
   protected:
-    bool isAncestor(const Ptr& node) const
-    {
-        auto current = getParent();
-        while (current)
-        {
-            if (current == node)
-            {
-                return true;
-            }
-            current = current->getParent();
-        }
-        return false;
-    }
+    bool isAncestor(const Ptr& node) const;
 
   private:
     std::string m_name;
