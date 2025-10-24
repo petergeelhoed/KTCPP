@@ -3,6 +3,7 @@
 #include <iostream>
 #include <memory>
 #include <ranges>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -26,6 +27,12 @@ class XmlNode : public std::enable_shared_from_this<XmlNode>
 
     void addChild(Ptr child)
     {
+        // check if unique name
+        if (nullptr != getChild(child->getName()))
+        {
+            throw std::runtime_error("Child already exists in this node.");
+        }
+
         // set myself as a weak parent ptr in the child
         child->m_parent = shared_from_this();
         m_children.push_back(std::move(child));
