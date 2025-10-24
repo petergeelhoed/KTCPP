@@ -11,7 +11,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Add the executable
-add_executable(test test.cpp filedesc.cpp)
+add_executable(test test.cpp filedesc.cpp )
+add_executable(xmltest testxml.cpp )
 
 # Include current directory for headers
 target_include_directories(test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
