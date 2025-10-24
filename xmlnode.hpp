@@ -26,6 +26,12 @@ class XmlNode : public std::enable_shared_from_this<XmlNode>
     XmlNode(XmlNode&& other) noexcept = delete;
     XmlNode& operator=(XmlNode&& other) noexcept = delete;
 
+    void addChild(const std::string& name)
+    {
+        auto child = std::make_shared<XmlNode>(std::move(name));
+        addChild(child);
+    }
+
     void addChild(Ptr child)
     {
         // check if unique name
@@ -42,6 +48,16 @@ class XmlNode : public std::enable_shared_from_this<XmlNode>
         // set myself as a weak parent ptr in the child
         child->m_parent = shared_from_this();
         m_children.push_back(std::move(child));
+    }
+
+    bool deleteChild(const std::string& name)
+    {
+        auto child = getChild(name);
+        if (child != nullptr)
+        {
+            return deleteChild(child);
+        }
+        return false;
     }
 
     bool deleteChild(const Ptr& childToDelete)

@@ -6,13 +6,12 @@ int main()
 {
     auto root = std::make_shared<XmlNode>("root");
     auto child2 = std::make_shared<XmlNode>("child2");
-    auto child3 = std::make_shared<XmlNode>("child3");
 
     {
         auto child1 = std::make_shared<XmlNode>("child1");
         root->addChild(child1);
         root->addChild(child2);
-        root->addChild(child3);
+        root->addChild("child3");
 
         std::cout << "Children before deletion:\n";
         for (const auto& child : root->getChildren())
@@ -46,6 +45,15 @@ int main()
         std::cout << " " << e.what() << "\n";
     }
 
+    try
+    {
+        root->addChild("child2");
+    }
+    catch (const std::runtime_error& e)
+    {
+        std::cout << " " << e.what() << "\n";
+    }
+
     std::cout << "Test unknown child:\n";
     auto cuckoo = root->getChild("other");
     if (cuckoo != nullptr)
@@ -56,6 +64,16 @@ int main()
     {
         std::cout << " All mine\n";
     }
+
+    {
+        std::cout << "Add child\n";
+        root->addChild("child5");
+        root->getChild("child5")->addChild("child5a");
+
+        std::cout << "delete two childdren\n";
+        root->deleteChild("child5");
+    }
+    std::cout << "out of scope for 5 and 5a\n";
 
     // what happens here?
     // child3 = child2;
