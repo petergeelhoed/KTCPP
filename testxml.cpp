@@ -56,17 +56,27 @@ int main()
     {
         std::cout << " All mine\n";
     }
-    // this copy assignment still works because they are shared pointers
-    child5 = child4;
 
-    // but this does not compile
+    // what happens here?
+    // child3 = child2;
+    // child3 refcount will go down. but not destroyed yet as
+    // it is in the root
+
+    // but this does not compile because we have no copy
     // use of deleted function ‘XmlNode& XmlNode::operator=(const XmlNode&)’
-    XmlNode bastard1("bastard1");
-    XmlNode bastard2("bastard1");
+    // XmlNode bastard1("bastard1");
+    // XmlNode bastard2("bastard1");
     //    bastard1 = bastard2;
 
-    // this does compile
-    bastard1 = std::move(bastard2);
+    // this does compile if we have move semantics
+    //    bastard1 = std::move(bastard2);
+
+    // but you cannot add it to the root
+    // as it should be on the heap as a shared pointer
+    //    root->addChild(&bastard1);
+
+    // so why do I need the move of the object?
+    //
 
     return 0;
 }

@@ -21,9 +21,8 @@ class XmlNode : public std::enable_shared_from_this<XmlNode>
     // should be non copyable and non movable
     XmlNode(const XmlNode& other) = delete;
     XmlNode& operator=(const XmlNode& rhs) = delete;
-    // but it is movable
-    XmlNode(XmlNode&& other) noexcept = default;
-    XmlNode& operator=(XmlNode&& other) noexcept = default;
+    XmlNode(XmlNode&& other) noexcept = delete;
+    XmlNode& operator=(XmlNode&& other) noexcept = delete;
 
     void addChild(Ptr child)
     {
