@@ -76,7 +76,26 @@ int main()
     //    root->addChild(&bastard1);
 
     // so why do I need the move of the object?
-    //
+    // If we would have them in a vector? but then why have the objects there
+    // and not the pointers? perhaps if we would have an object pool?
+
+    // circular reference test
+
+    auto child4 = std::make_shared<XmlNode>("child4");
+    root->addChild(child4);
+    try
+    {
+        std::cout << "Testing circular reference\n";
+        child4->addChild(root);
+    }
+    catch (const std::runtime_error& e)
+    {
+        std::cout << " " << e.what() << "\n";
+    }
+
+    // will it clean up?
+    // nope.
+    // so we need to prevent loops in xml it should be hierarchical
 
     return 0;
 }

@@ -14,9 +14,11 @@ class XmlNode : public std::enable_shared_from_this<XmlNode>
 
     explicit XmlNode(std::string name) : m_name(std::move(name)) {}
 
-    //~XmlNode() = default;
-    // for testing
-    ~XmlNode() { std::cout << "destroying " << m_name << "\n"; };
+    ~XmlNode()
+    {
+        m_parent.reset();
+        std::cout << "destroying " << m_name << "\n";
+    };
 
     // should be non copyable and non movable
     XmlNode(const XmlNode& other) = delete;
@@ -30,6 +32,11 @@ class XmlNode : public std::enable_shared_from_this<XmlNode>
         if (nullptr != getChild(child->getName()))
         {
             throw std::runtime_error("Child already exists in this node.");
+        }
+        if (isAncestor(child))
+        {
+            throw std::runtime_error(
+                "Cannot add ancestor as a child, you pervert.");
         }
 
         // set myself as a weak parent ptr in the child
@@ -66,6 +73,20 @@ class XmlNode : public std::enable_shared_from_this<XmlNode>
     const std::vector<Ptr>& getChildren() const { return m_children; }
 
     const std::string& getName() const { return m_name; }
+
+    bool isAncestor(const Ptr& node) const
+    {
+        auto current = getParent();
+        while (current)
+        {
+            if (current == node)
+            {
+                return true;
+            }
+            current = current->getParent();
+        }
+        return false;
+    }
 
   private:
     std::string m_name;
