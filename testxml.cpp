@@ -35,5 +35,27 @@ int main()
         std::cout << "- " << child->getName() << "\n";
     }
 
+    // test unique childnames
+    std::cout << "Test unique Children(cannot add child2):\n";
+    try
+    {
+        root->addChild(child2);
+    }
+    catch (const std::runtime_error& e)
+    {
+        std::cout << " " << e.what() << "\n";
+    }
+
+    std::cout << "Test unknown child:\n";
+    auto cuckoo = root->getChild("other");
+    if (cuckoo != nullptr)
+    {
+        std::cout << " Cuckoo found, eject from nest\n";
+    }
+    else
+    {
+        std::cout << " All mine\n";
+    }
+
     return 0;
 }
