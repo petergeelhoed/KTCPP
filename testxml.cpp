@@ -56,6 +56,17 @@ int main()
     {
         std::cout << " All mine\n";
     }
+    // this copy assignment still works because they are shared pointers
+    child5 = child4;
+
+    // but this does not compile
+    // use of deleted function ‘XmlNode& XmlNode::operator=(const XmlNode&)’
+    XmlNode bastard1("bastard1");
+    XmlNode bastard2("bastard1");
+    //    bastard1 = bastard2;
+
+    // this does compile
+    bastard1 = std::move(bastard2);
 
     return 0;
 }
