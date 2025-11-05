@@ -1,21 +1,36 @@
 #include <cassert>
 #include <climits>
 #include <cstdio>
-extern const int SIZE = 3;
+
+extern const int SIZE = 1350;
 extern const int CENT = 100;
+int verbose;
 
 int f(int value)
 {
     auto result = (int)((float)value / (float)SIZE * 100.0);
 
     float tmp3 = (float)value;
+    if (verbose)
+        printf("float   %.12f\n", tmp3);
+
     float tmp2 = (float)SIZE;
+    if (verbose)
+        printf("float   %.12f\n", tmp2);
 
     // division of two floats gives a float
+    // in the example of 27/1350 this division will be
+    // 0.01999999955296516418
     float tmp1 = tmp3 / tmp2;
+    if (verbose)
+        printf("float / %.12f\n", tmp1);
 
     // 100.0 is a double literal
     double tmp0 = tmp1 * 100.0;
+    if (verbose)
+        printf("double  %.18lf\n", tmp0);
+
+    // and then this cast will be 1 instead of 2.
     int res = (int)tmp0;
     return result;
 }
@@ -35,9 +50,10 @@ int g(int value)
     return result;
 }
 
-int main()
+int main(int argc, char** argv)
 {
-    int i = INT_MAX / CENT;
+    verbose = (argc != 1);
+    int i = 30;
 
     while (i > 0)
     {
@@ -59,7 +75,7 @@ int main()
                (f(i) != g(i)) ? inequal : equal,
                g(i),
                longCENT * longi / longSIZE);
-        i /= 2;
+        i -= 1;
     }
     return 0;
 }

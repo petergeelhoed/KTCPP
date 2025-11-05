@@ -36,7 +36,7 @@ void XmlNode::addChild(XmlNode::Ptr child)
     }
 
     // set myself as a weak parent ptr in the child
-    child->m_parent = shared_from_this();
+    child->m_parent = weak_from_this();
     m_children.push_back(std::move(child));
 }
 
