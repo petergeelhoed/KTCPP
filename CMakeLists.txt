@@ -11,6 +11,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_executable(test test.cpp filedesc.cpp)
 add_executable(xmltest xmlnode.cpp testxml.cpp)
 add_executable(sound sound.cpp)
+add_executable(intpromotion intpromotion.cpp)
 
 target_compile_options(xmltest PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
