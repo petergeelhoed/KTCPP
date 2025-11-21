@@ -29,11 +29,13 @@ void printVec(const std::vector<Point>& points)
 
 int main()
 {
+    // added 7.1 and 5.4 to show != and == otherwist > and >= would also give
+    // the right order
     std::vector<Point> points = {
-        {1, 2}, {4, 3}, {3, 9}, {4, 2}, {1, 4}, {4, 8}, {4, 6}};
+        {5, 4}, {1, 2}, {4, 3}, {3, 9}, {4, 2}, {1, 4}, {4, 8}, {4, 6}, {7, 1}};
 
     printVec(points);
     std::cout << "\n";
-    gather(points.begin(), points.end(), points.begin() + 3);
+    gather(points.begin(), points.end(), points.begin() + 4);
     printVec(points);
 }
