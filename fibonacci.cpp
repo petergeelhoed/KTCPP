@@ -1,53 +1,77 @@
+#include <algorithm>
 #include <iostream>
 #include <numeric>
 #include <ranges>
+#include <stdexcept>
 #include <utility>
+#include <vector>
 
 namespace
 {
-unsigned int fib_accumulate(const unsigned int n)
+
+struct Fibonacci
 {
-    if (n < 2)
-    {
-        return n;
-    }
-
-    auto range = std::views::iota(2U, n + 1);
-
-    auto result = std::accumulate(
-        range.begin(),
-        range.end(),
-        std::pair{0U, 1U},
-        // the val needs to be there for this to work
-        [](auto state, [[maybe_unused]] const unsigned int val) {
-            return std::pair{state.second, state.first + state.second};
-        });
-
-    return result.second;
-}
-
-unsigned int fib_lin(const unsigned int n)
-{
-    if (n < 2)
-    {
-        return n;
-    }
-
-    unsigned int f1 = 1;
+    unsigned int f1 = 0;
     unsigned int f2 = 1;
-    for (auto f : std::views::iota(2U, n) |
-                      std::views::transform(
-                          [&f1, &f2]([[maybe_unused]] const unsigned int i) {
-                              return f1 + f2;
-                          }))
+
+    unsigned int operator()()
     {
+        auto result = f1;
         f1 = f2;
-        f2 = f;
+        f2 += result;
+        return result;
     }
-    return f2;
+};
+
+void fib_range(unsigned int beginrange, unsigned int endrange)
+{
+    if (endrange < beginrange)
+    {
+        throw std::invalid_argument("End should be >= begin");
+    }
+    std::vector<unsigned int> output(endrange + 1);
+
+    // this took some research, but a stateful functor seems to be the way
+    std::ranges::generate(output, Fibonacci{});
+
+    for (auto f : output | std::views::drop(beginrange))
+    {
+        std::cout << f << '\n';
+    }
 }
 
-unsigned int fib(const unsigned int n) // NOLINT[misc-no-recursion]()
+void fib_mut_range(unsigned int beginrange, unsigned int endrange)
+{
+    if (endrange < beginrange)
+    {
+        throw std::invalid_argument("End should be >= begin");
+    }
+    std::vector<unsigned int> output;
+    output.reserve(endrange + 1);
+
+    auto fibs =
+        std::views::iota(0U, endrange + 1) |
+        std::views::transform(
+            [f1 = 0U, f2 = 1U]([[maybe_unused]] unsigned int i) mutable {
+                auto result = f1;
+                f1 = f2;
+                f2 += result;
+                return result;
+            });
+
+    // dropping the beginning does not work because we need to go through the
+    // process (lazy)
+    for (auto f : fibs) //| std::views::drop(beginrange))
+    {
+        output.push_back(f);
+    }
+    for (auto f : output | std::views::drop(beginrange))
+    {
+        std::cout << f << '\n';
+    }
+}
+
+unsigned int fib(unsigned int n) // NOLINT[misc-no-recursion]()
 {
     if (n == 0)
         return 0;
@@ -61,29 +85,20 @@ int main()
 {
     const unsigned int beginrange = 5;
     const unsigned int endrange = 8;
+    if (endrange < beginrange)
+    {
+        throw std::invalid_argument("End should be >= begin");
+    }
+
     auto r = std::views::iota(beginrange, endrange + 1) |
-             std::views::transform([](const unsigned int i) { return fib(i); });
+             std::views::transform([](unsigned int i) { return fib(i); });
     for (auto f : r)
     {
         std::cout << f << '\n';
     }
     std::cout << '\n';
 
-    auto q =
-        std::views::iota(beginrange, endrange + 1) |
-        std::views::transform([](const unsigned int i) { return fib_lin(i); });
-    for (auto f : q)
-    {
-        std::cout << f << '\n';
-    }
-
+    fib_mut_range(beginrange, endrange);
     std::cout << '\n';
-
-    auto s = std::views::iota(beginrange, endrange + 1) |
-             std::views::transform(
-                 [](const unsigned int i) { return fib_accumulate(i); });
-    for (auto f : s)
-    {
-        std::cout << f << '\n';
-    }
+    fib_range(beginrange, endrange);
 }
