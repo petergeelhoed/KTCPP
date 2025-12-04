@@ -17,8 +17,11 @@
       }
     },
 
-    { "name": "debug",   "inherits": "base", "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug"   } },
-    { "name": "release", "inherits": "base", "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" } },
+    { "name": "debug",   "inherits": "base", "displayName": "Debug configure",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" } },
+
+    { "name": "release", "inherits": "base", "displayName": "Release configure",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" } },
 
     {
       "name": "test",
@@ -31,8 +34,18 @@
   ],
 
   "buildPresets": [
-    { "name": "debug",   "configurePreset": "debug"   },
-    { "name": "release", "configurePreset": "release" },
+    {
+      "name": "debug",
+      "displayName": "Build Debug (all)",
+      "configurePreset": "debug",
+      "jobs": 3
+    },
+    {
+      "name": "release",
+      "displayName": "Build Release (all)",
+      "configurePreset": "release",
+      "jobs": 3
+    },
     {
       "name": "test",
       "displayName": "Build test apps",
@@ -60,6 +73,18 @@
           "tests": [ "testfd", "xmltest" ]
         }
       }
+    }
+  ],
+
+  "workflowPresets": [
+    {
+      "name": "test",
+      "displayName": "Configure + build + run tests",
+      "steps": [
+        { "type": "configure", "name": "test" },
+        { "type": "build",     "name": "test" },
+        { "type": "test",      "name": "test" }
+      ]
     }
   ]
 }
