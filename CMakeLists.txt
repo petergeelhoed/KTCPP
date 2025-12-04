@@ -3,43 +3,47 @@ cmake_minimum_required(VERSION 3.10)
 
 project(filedesc_project VERSION 1.0 LANGUAGES CXX)
 
-# Project-wide C++ standard (per target via property is recommended)
+# ---- Language standard (project-wide) ----
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Export compile_commands.json (also set via presets below for robustness)
+# For clangd/IDE integrations
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# ---- Targets ----
-add_executable(test       test.cpp       filedesc.cpp)
-add_executable(xmltest    xmlnode.cpp    testxml.cpp)
-add_executable(sound      sound.cpp)
-add_executable(gather     gather.cpp)
-add_executable(algorithm  algorithm.cpp)
-add_executable(intpromotion intpromotion.cpp)
-add_executable(fibonacci  fibonacci.cpp)
+# ---- Helper: create executable and register it in a list ----
+# Usage: add_app(<name> <src1> <src2> ...)
+set(ALL_APPS "")  # will hold all target names
 
-# Include dirs for 'test'
-target_include_directories(test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+function(add_app name)
+    add_executable("${name}" ${ARGN})
+    # Remember the target name in a project-wide variable
+    list(APPEND ALL_APPS "${name}")
+    set(ALL_APPS "${ALL_APPS}" PARENT_SCOPE)
+endfunction()
 
-# Per-target warnings (xmltest had explicit options)
-target_compile_options(xmltest PRIVATE
-    -Wall -Wextra -Wpedantic -Werror
-)
+# ---- Define targets (sources per target) ----
+add_app(test       test.cpp       filedesc.cpp)
+add_app(xmltest    xmlnode.cpp    testxml.cpp)
+add_app(sound      sound.cpp)
+add_app(gather     gather.cpp)
+add_app(algorithm  algorithm.cpp)
+add_app(intpromotion intpromotion.cpp)
+add_app(fibonacci  fibonacci.cpp)
 
-# Optional: apply warnings to ALL executables via a helper function
+# ---- Common warnings helper ----
 function(enable_strict_warnings target)
     target_compile_options("${target}" PRIVATE
         -Wall -Wextra -Wpedantic -Werror -Wconversion
     )
 endfunction()
 
-# Apply to the ones you want (or all)
-enable_strict_warnings(test)
-enable_strict_warnings(sound)
-enable_strict_warnings(gather)
-enable_strict_warnings(algorithm)
-enable_strict_warnings(intpromotion)
-enable_strict_warnings(fibonacci)
+# ---- Apply common settings to all targets in the list ----
+foreach(tgt IN LISTS ALL_APPS)
+    enable_strict_warnings("${tgt}")
+endforeach()
+
+# ---- Per-target special cases ----
+# Include dirs for 'test' only
+target_include_directories(test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 
