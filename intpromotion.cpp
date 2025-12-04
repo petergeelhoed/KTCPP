@@ -15,7 +15,7 @@ const char inequal[3] = "!=";
 
 int f(int value)
 {
-    auto result = (int)((float)value / (float)SIZE * 100.0);
+    //   auto result = (int)((float)value / (float)SIZE * 100.0);
 
     float tmp3 = (float)value;
     float tmp2 = (float)SIZE;
@@ -68,7 +68,7 @@ int g(int value)
     return result;
 }
 
-int main(int argc, char** argv)
+int main(int argc, [[maybe_unused]] char** argv)
 {
     verbose = (argc > 1);
     int i = 1;
