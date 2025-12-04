@@ -1,17 +1,12 @@
 
 {
   "version": 6,
-  "cmakeMinimumRequired": {
-    "major": 3,
-    "minor": 10,
-    "patch": 0
-  },
+  "cmakeMinimumRequired": { "major": 3, "minor": 10, "patch": 0 },
 
   "configurePresets": [
     {
       "name": "base",
-      "displayName": "Base configuration",
-      "description": "Common settings for all configurations",
+      "displayName": "Base",
       "generator": "Unix Makefiles",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
@@ -21,32 +16,29 @@
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }
     },
+
+    { "name": "debug",   "inherits": "base", "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug"   } },
+    { "name": "release", "inherits": "base", "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" } },
+
     {
-      "name": "debug",
+      "name": "test",
       "inherits": "base",
-      "displayName": "Debug",
+      "displayName": "Test-only configure",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-    {
-      "name": "release",
-      "inherits": "base",
-      "displayName": "Release",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
       }
     }
   ],
 
   "buildPresets": [
+    { "name": "debug",   "configurePreset": "debug"   },
+    { "name": "release", "configurePreset": "release" },
+
     {
-      "name": "debug",
-      "configurePreset": "debug"
-    },
-    {
-      "name": "release",
-      "configurePreset": "release"
+      "name": "test",
+      "displayName": "Build only the 'test' target",
+      "configurePreset": "test",
+      "targets": [ "test" ]
     }
   ]
 }
