@@ -51,7 +51,7 @@
       "displayName": "Build only the 'test' and 'xmltest' targets",
       "configurePreset": "test",
       "jobs": 3,
-      "targets": [ "test", "xmltest" ]
+      "targets": [ "testfd", "xmltest" ]
     }
   ]
 }

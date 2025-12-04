@@ -35,7 +35,7 @@ endfunction()
 
 # ---- Define targets ----
 # Test-only apps (excluded from ALL)
-add_test_app(test       test.cpp       filedesc.cpp)
+add_test_app(testfd       test.cpp       filedesc.cpp)
 add_test_app(xmltest    xmlnode.cpp    testxml.cpp)
 
 # Regular apps
@@ -59,5 +59,5 @@ endforeach()
 
 # ---- Per-target special cases ----
 # Include dirs for 'test' only
-target_include_directories(test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+target_include_directories(testfd PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 
