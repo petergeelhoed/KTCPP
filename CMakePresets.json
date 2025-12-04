@@ -16,10 +16,6 @@
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }
     },
-
-    { "name": "debug",   "inherits": "base", "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug"   } },
-    { "name": "release", "inherits": "base", "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" } },
-
     {
       "name": "test",
       "inherits": "base",
@@ -32,26 +28,32 @@
 
   "buildPresets": [
     {
-      "name": "debug",
-      "displayName": "Build Debug (all)",
-      "configurePreset": "debug",
-      // No 'targets' here → builds default 'all'
+      "name": "test",
+      "displayName": "Build test apps",
+      "configurePreset": "test",
+      "targets": [ "testfd", "xmltest" ],
       "jobs": 3
-    },
+    }
+  ],
 
-    {
-      "name": "release",
-      "displayName": "Build Release (all)",
-      "configurePreset": "release",
-      "jobs": 3
-    },
-
+  "testPresets": [
     {
       "name": "test",
-      "displayName": "Build only the 'test' and 'xmltest' targets",
+      "displayName": "Run CTest for test preset",
       "configurePreset": "test",
-      "jobs": 3,
-      "targets": [ "testfd", "xmltest" ]
+      "execution": {
+        "jobs": 3,              // parallel test execution
+        "stopOnFailure": true
+      },
+      "output": {
+        "shortProgress": true,
+        "verbosity": "default"
+      },
+      "filter": {
+        "include": {
+          "tests": [ "test_app", "xml_test_app" ]  // names from add_test()
+        }
+      }
     }
   ]
 }

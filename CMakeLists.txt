@@ -3,6 +3,11 @@ cmake_minimum_required(VERSION 3.10)
 
 project(filedesc_project VERSION 1.0 LANGUAGES CXX)
 
+# Enable CTest integration
+include(CTest)
+enable_testing()
+
+
 # ---- Language standard (project-wide) ----
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -56,6 +61,11 @@ endfunction()
 foreach(tgt IN LISTS APPS TEST_APPS)
     enable_strict_warnings("${tgt}")
 endforeach()
+
+foreach(tgt IN LISTS TEST_APPS)
+add_test(NAME "${tgt}" COMMAND $<TARGET_FILE:${tgt}>)
+endforeach()
+
 
 # ---- Per-target special cases ----
 # Include dirs for 'test' only
