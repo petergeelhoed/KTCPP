@@ -1,3 +1,4 @@
+
 {
   "version": 6,
   "cmakeMinimumRequired": { "major": 3, "minor": 10, "patch": 0 },
@@ -30,13 +31,26 @@
   ],
 
   "buildPresets": [
-    { "name": "debug",   "configurePreset": "debug"   },
-    { "name": "release", "configurePreset": "release" },
+    {
+      "name": "debug",
+      "displayName": "Build Debug (all)",
+      "configurePreset": "debug",
+      // No 'targets' here → builds default 'all'
+      "jobs": 3
+    },
+
+    {
+      "name": "release",
+      "displayName": "Build Release (all)",
+      "configurePreset": "release",
+      "jobs": 3
+    },
 
     {
       "name": "test",
       "displayName": "Build only the 'test' and 'xmltest' targets",
       "configurePreset": "test",
+      "jobs": 3,
       "targets": [ "test", "xmltest" ]
     }
   ]
