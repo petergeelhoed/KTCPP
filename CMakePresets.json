@@ -1,7 +1,7 @@
 
 {
   "version": 6,
-  "cmakeMinimumRequired": { "major": 3, "minor": 10, "patch": 0 },
+  "cmakeMinimumRequired": { "major": 3, "minor": 25, "patch": 0 },
 
   "configurePresets": [
     {
@@ -79,7 +79,7 @@
   "workflowPresets": [
     {
       "name": "test",
-      "displayName": "Configure + build + run tests",
+      "displayName": "Configure + build Debug/Release + run tests",
       "steps": [
         { "type": "configure", "name": "test" },
         { "type": "build",     "name": "test" },
