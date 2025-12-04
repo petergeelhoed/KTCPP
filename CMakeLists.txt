@@ -11,20 +11,34 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # For clangd/IDE integrations
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# ---- Helper: create executable and register it in a list ----
-# Usage: add_app(<name> <src1> <src2> ...)
-set(ALL_APPS "")  # will hold all target names
+# ---- Lists to hold target names ----
+set(APPS "")       # regular app targets
+set(TEST_APPS "")      # test-only targets (excluded from ALL)
 
+# ---- Helper: create regular executable and register it ----
+# Usage: add_app(<name> <src1> <src2> ...)
 function(add_app name)
     add_executable("${name}" ${ARGN})
-    # Remember the target name in a project-wide variable
-    list(APPEND ALL_APPS "${name}")
-    set(ALL_APPS "${ALL_APPS}" PARENT_SCOPE)
+    list(APPEND APPS "${name}")
+    set(APPS "${APPS}" PARENT_SCOPE)
 endfunction()
 
-# ---- Define targets (sources per target) ----
-add_app(test       test.cpp       filedesc.cpp)
-add_app(xmltest    xmlnode.cpp    testxml.cpp)
+# ---- Helper: create test executable, EXCLUDE_FROM_ALL, and register it ----
+# Usage: add_test_app(<name> <src1> <src2> ...)
+function(add_test_app name)
+    add_executable("${name}" ${ARGN})
+    # Do not build by default (excluded from 'all')
+    set_target_properties("${name}" PROPERTIES EXCLUDE_FROM_ALL YES)
+    list(APPEND TEST_APPS "${name}")
+    set(TEST_APPS "${TEST_APPS}" PARENT_SCOPE)
+endfunction()
+
+# ---- Define targets ----
+# Test-only apps (excluded from ALL)
+add_test_app(test       test.cpp       filedesc.cpp)
+add_test_app(xmltest    xmlnode.cpp    testxml.cpp)
+
+# Regular apps
 add_app(sound      sound.cpp)
 add_app(gather     gather.cpp)
 add_app(algorithm  algorithm.cpp)
@@ -38,8 +52,8 @@ function(enable_strict_warnings target)
     )
 endfunction()
 
-# ---- Apply common settings to all targets in the list ----
-foreach(tgt IN LISTS ALL_APPS)
+# ---- Apply common settings to all targets ----
+foreach(tgt IN LISTS APPS TEST_APPS)
     enable_strict_warnings("${tgt}")
 endforeach()
 
