@@ -5,30 +5,42 @@
 
   "configurePresets": [
     {
-      "name": "base",
-      "displayName": "Base",
+      "name": "debug",
+      "displayName": "Debug configure",
       "generator": "Unix Makefiles",
-      "binaryDir": "${sourceDir}/build/${presetName}",
+      "binaryDir": "${sourceDir}/build/debug",
       "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_CXX_STANDARD": "20",
         "CMAKE_CXX_STANDARD_REQUIRED": "ON",
         "CMAKE_CXX_EXTENSIONS": "OFF",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }
     },
-
-    { "name": "debug",   "inherits": "base", "displayName": "Debug configure",
-      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" } },
-
-    { "name": "release", "inherits": "base", "displayName": "Release configure",
-      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" } },
-
+    {
+      "name": "release",
+      "displayName": "Release configure",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
     {
       "name": "test",
-      "inherits": "base",
       "displayName": "Test-only configure",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/test",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }
     }
   ],
@@ -79,11 +91,13 @@
   "workflowPresets": [
     {
       "name": "test",
-      "displayName": "Configure + build Debug/Release + run tests",
+      "displayName": "Debug + Test Workflow",
       "steps": [
+        { "type": "configure", "name": "debug" },
+        { "type": "build", "name": "debug" },
         { "type": "configure", "name": "test" },
-        { "type": "build",     "name": "test" },
-        { "type": "test",      "name": "test" }
+        { "type": "build", "name": "test" },
+        { "type": "test", "name": "test" }
       ]
     }
   ]
