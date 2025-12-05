@@ -51,13 +51,6 @@
       "displayName": "Build Release (all)",
       "inherits": "base-build",
       "configurePreset": "release"
-    },
-    {
-      "name": "debug_tests",
-      "displayName": "Build test apps (Debug)",
-      "inherits": "base-build",
-      "configurePreset": "debug",
-      "targets": [ "testfd", "xmltest" ]
     }
   ],
 
@@ -76,34 +69,35 @@
     },
     {
       "name": "debug_ctest",
-      "displayName": "Run CTest for debug",
+      "displayName": "Run CTest (Debug, all tests)",
       "inherits": "base-test",
-      "configurePreset": "debug",
-      "filter": {
-        "include": {
-          "tests": [ "testfd", "xmltest" ]
-        }
-      }
+      "configurePreset": "debug"
+    },
+    {
+      "name": "release_ctest",
+      "displayName": "Run CTest (Release, all tests)",
+      "inherits": "base-test",
+      "configurePreset": "release"
     }
   ],
 
   "workflowPresets": [
     {
       "name": "debug",
-      "displayName": "Debug build + CTest",
+      "displayName": "Debug: configure + build + test",
       "steps": [
         { "type": "configure", "name": "debug" },
-        { "type": "build", "name": "debug" },
-        { "type": "build", "name": "debug_tests" },
-        { "type": "test", "name": "debug_ctest" }
+        { "type": "build",     "name": "debug" },
+        { "type": "test",      "name": "debug_ctest" }
       ]
     },
     {
       "name": "release",
-      "displayName": "Release build",
+      "displayName": "Release: configure + build + test",
       "steps": [
         { "type": "configure", "name": "release" },
-        { "type": "build", "name": "release" }
+        { "type": "build",     "name": "release" },
+        { "type": "test",      "name": "release_ctest" }
       ]
     }
   ]

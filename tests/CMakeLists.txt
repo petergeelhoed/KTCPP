@@ -10,7 +10,6 @@ add_executable(testfd
 target_include_directories(testfd PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/.."   # ../ points to the parent folder
     )
-set_target_properties(testfd PROPERTIES EXCLUDE_FROM_ALL YES)
 
 add_executable(xmltest
     testxml.cpp      # moved into this test/ folder
@@ -19,8 +18,6 @@ add_executable(xmltest
 target_include_directories(xmltest PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/.."
 )
-
-set_target_properties(xmltest PROPERTIES EXCLUDE_FROM_ALL YES)
 
 # Reuse the root helper for warnings
 enable_strict_warnings(testfd)
