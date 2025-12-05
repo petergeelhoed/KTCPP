@@ -8,7 +8,7 @@
       "name": "debug",
       "displayName": "Debug configure",
       "generator": "Unix Makefiles",
-      "binaryDir": "${sourceDir}/build/debug",
+      "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_CXX_STANDARD": "20",
@@ -21,22 +21,9 @@
       "name": "release",
       "displayName": "Release configure",
       "generator": "Unix Makefiles",
-      "binaryDir": "${sourceDir}/build/release",
+      "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_CXX_STANDARD": "20",
-        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
-        "CMAKE_CXX_EXTENSIONS": "OFF",
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
-      }
-    },
-    {
-      "name": "test",
-      "displayName": "Test-only configure",
-      "generator": "Unix Makefiles",
-      "binaryDir": "${sourceDir}/build/test",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_CXX_STANDARD": "20",
         "CMAKE_CXX_STANDARD_REQUIRED": "ON",
         "CMAKE_CXX_EXTENSIONS": "OFF",
@@ -59,9 +46,9 @@
       "jobs": 3
     },
     {
-      "name": "test",
-      "displayName": "Build test apps",
-      "configurePreset": "test",
+      "name": "debug_tests",
+      "displayName": "Build test apps (Debug)",
+      "configurePreset": "debug",
       "targets": [ "testfd", "xmltest" ],
       "jobs": 3
     }
@@ -69,35 +56,34 @@
 
   "testPresets": [
     {
-      "name": "test",
-      "displayName": "Run CTest for test preset",
-      "configurePreset": "test",
-      "execution": {
-        "jobs": 3,
-        "stopOnFailure": true
-      },
-      "output": {
-        "shortProgress": true,
-        "verbosity": "default"
-      },
+      "name": "debug_ctest",
+      "displayName": "Run CTest for debug",
+      "configurePreset": "debug",
+      "execution": { "jobs": 3, "stopOnFailure": true },
+      "output": { "shortProgress": true, "verbosity": "default" },
       "filter": {
-        "include": {
-          "tests": [ "testfd", "xmltest" ]
-        }
+        "include": { "tests": [ "testfd", "xmltest" ] }
       }
     }
   ],
 
   "workflowPresets": [
     {
-      "name": "test",
-      "displayName": "Debug + Test Workflow",
+      "name": "debug",
+      "displayName": "Debug build + CTest",
       "steps": [
         { "type": "configure", "name": "debug" },
         { "type": "build", "name": "debug" },
-        { "type": "configure", "name": "test" },
-        { "type": "build", "name": "test" },
-        { "type": "test", "name": "test" }
+        { "type": "build", "name": "debug_tests" },
+        { "type": "test", "name": "debug_ctest" }
+      ]
+    }, 
+    {
+      "name": "release",
+      "displayName": "Release build",
+      "steps": [
+        { "type": "configure", "name": "release" },
+        { "type": "build", "name": "release" }
       ]
     }
   ]
