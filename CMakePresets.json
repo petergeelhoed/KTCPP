@@ -5,12 +5,11 @@
 
   "configurePresets": [
     {
-      "name": "debug",
-      "displayName": "Debug configure",
+      "name": "base-config",
+      "hidden": true,
       "generator": "Unix Makefiles",
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_CXX_STANDARD": "20",
         "CMAKE_CXX_STANDARD_REQUIRED": "ON",
         "CMAKE_CXX_EXTENSIONS": "OFF",
@@ -18,51 +17,72 @@
       }
     },
     {
+      "name": "debug",
+      "displayName": "Debug configure",
+      "inherits": "base-config",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
       "name": "release",
       "displayName": "Release configure",
-      "generator": "Unix Makefiles",
-      "binaryDir": "${sourceDir}/build",
+      "inherits": "base-config",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_CXX_STANDARD": "20",
-        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
-        "CMAKE_CXX_EXTENSIONS": "OFF",
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+        "CMAKE_BUILD_TYPE": "Release"
       }
     }
   ],
 
   "buildPresets": [
     {
+      "name": "base-build",
+      "hidden": true,
+      "jobs": 3
+    },
+    {
       "name": "debug",
       "displayName": "Build Debug (all)",
-      "configurePreset": "debug",
-      "jobs": 3
+      "inherits": "base-build",
+      "configurePreset": "debug"
     },
     {
       "name": "release",
       "displayName": "Build Release (all)",
-      "configurePreset": "release",
-      "jobs": 3
+      "inherits": "base-build",
+      "configurePreset": "release"
     },
     {
       "name": "debug_tests",
       "displayName": "Build test apps (Debug)",
+      "inherits": "base-build",
       "configurePreset": "debug",
-      "targets": [ "testfd", "xmltest" ],
-      "jobs": 3
+      "targets": [ "testfd", "xmltest" ]
     }
   ],
 
   "testPresets": [
     {
+      "name": "base-test",
+      "hidden": true,
+      "execution": {
+        "jobs": 3,
+        "stopOnFailure": true
+      },
+      "output": {
+        "shortProgress": true,
+        "verbosity": "default"
+      }
+    },
+    {
       "name": "debug_ctest",
       "displayName": "Run CTest for debug",
+      "inherits": "base-test",
       "configurePreset": "debug",
-      "execution": { "jobs": 3, "stopOnFailure": true },
-      "output": { "shortProgress": true, "verbosity": "default" },
       "filter": {
-        "include": { "tests": [ "testfd", "xmltest" ] }
+        "include": {
+          "tests": [ "testfd", "xmltest" ]
+        }
       }
     }
   ],
@@ -77,7 +97,7 @@
         { "type": "build", "name": "debug_tests" },
         { "type": "test", "name": "debug_ctest" }
       ]
-    }, 
+    },
     {
       "name": "release",
       "displayName": "Release build",
