@@ -1,5 +1,5 @@
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.28)
 
 project(filedesc_project VERSION 1.0 LANGUAGES CXX)
 
@@ -39,6 +39,7 @@ add_app(gather       gather.cpp)
 add_app(algorithm    algorithm.cpp)
 add_app(intpromotion intpromotion.cpp)
 add_app(fibonacci    fibonacci.cpp)
+add_app(iterator     iterator.cpp)
 
 # ---- Bring in tests from subdirectory ----
 add_subdirectory(tests)
@@ -47,4 +48,21 @@ add_subdirectory(tests)
 foreach(tgt IN LISTS APPS)
     enable_strict_warnings("${tgt}")
 endforeach()
+
+
+add_test(
+  NAME iterator
+  COMMAND bash -c "echo 'dsfj;adsf;' | \"$<TARGET_FILE:iterator>\""
+)
+set_tests_properties(iterator PROPERTIES
+  PASS_REGULAR_EXPRESSION "dsfj[\r\n]+adsf"
+)
+
+add_test(
+  NAME iteratorspaces
+  COMMAND bash -c "echo 'a ; b;c' | \"$<TARGET_FILE:iterator>\""
+)
+set_tests_properties(iteratorspaces PROPERTIES
+  PASS_REGULAR_EXPRESSION "a [\r\n]+ b[\r\n]+c"
+)
 
