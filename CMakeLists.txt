@@ -40,6 +40,9 @@ add_app(algorithm    algorithm.cpp)
 add_app(intpromotion intpromotion.cpp)
 add_app(fibonacci    fibonacci.cpp)
 add_app(iterator     iterator.cpp)
+add_app(power        power.cpp)
+add_app(square       square.cpp)
+add_app(test_array   test_array.cpp)
 
 # ---- Bring in tests from subdirectory ----
 add_subdirectory(tests)
