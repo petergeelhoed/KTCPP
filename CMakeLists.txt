@@ -43,6 +43,7 @@ add_app(iterator     iterator.cpp)
 add_app(power        power.cpp)
 add_app(square       square.cpp)
 add_app(test_array   test_array.cpp)
+add_app(concat       concat.cpp)
 
 # ---- Bring in tests from subdirectory ----
 add_subdirectory(tests)
