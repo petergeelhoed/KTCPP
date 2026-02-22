@@ -7,9 +7,7 @@
 template <class T>
 concept Ostreamable = requires(std::ostream& os, const T& arg)
 {
-    // clang-format off
-    { os << arg } -> std::same_as<std::ostream&>;
-    // clang-format on
+    <% os << arg %>->std::same_as<std::ostream&>;
 };
 
 class Concat
