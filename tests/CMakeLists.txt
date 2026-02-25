@@ -27,3 +27,8 @@ enable_strict_warnings(xmltest)
 add_test(NAME testfd   COMMAND $<TARGET_FILE:testfd>)
 add_test(NAME xmltest  COMMAND $<TARGET_FILE:xmltest>)
 
+  add_test(
+    NAME sqrtexcept:e2e:bash
+    COMMAND bash "${CMAKE_SOURCE_DIR}/tests/sqrtexcept_test.sh" $<TARGET_FILE:sqrtexcept>
+  )
+

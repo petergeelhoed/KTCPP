@@ -44,6 +44,7 @@ add_app(power        power.cpp)
 add_app(square       square.cpp)
 add_app(test_array   test_array.cpp)
 add_app(concat       concat.cpp)
+add_app(sqrtexcept   sqrtexcept.cpp)
 
 # ---- Bring in tests from subdirectory ----
 add_subdirectory(tests)
