@@ -40,7 +40,8 @@ std::expected<double, Error> parseDouble(const std::string& s)
     const std::string_view t = trim(s);
     if (t.empty())
     {
-        return std::unexpected(Error{ErrorCode::EmptyInput, "Empty input."});
+        return std::unexpected<Error>(
+            Error{ErrorCode::EmptyInput, "Empty input."});
     }
 
     errno = 0;
@@ -50,24 +51,21 @@ std::expected<double, Error> parseDouble(const std::string& s)
 
     if (end == tmp.c_str())
     {
-        return std::unexpected(
+        return std::unexpected<Error>(
             Error{ErrorCode::InvalidNumber, "Not a valid number."});
     }
-
     if (*end != '\0')
     {
-        return std::unexpected(
+        return std::unexpected<Error>(
             Error{ErrorCode::UnexpectedChars,
                   "Unexpected characters after the number."});
     }
-
     if (errno == ERANGE)
     {
-        return std::unexpected(
+        return std::unexpected<Error>(
             Error{ErrorCode::OutOfRange,
                   "Input number is too large or too small to represent."});
     }
-
     return val;
 }
 
@@ -75,25 +73,25 @@ std::expected<double, Error> safeSqrt(double x)
 {
     if (std::isnan(x))
     {
-        return std::unexpected(Error{ErrorCode::DomainError, "Input is NaN."});
+        return std::unexpected<Error>(
+            Error{ErrorCode::DomainError, "Input is NaN."});
     }
     if (x < 0.0)
     {
-        return std::unexpected(Error{
+        return std::unexpected<Error>(Error{
             ErrorCode::DomainError,
             "Square root of a negative number is undefined for real numbers."});
     }
     if (std::isinf(x))
     {
-        return std::unexpected(
+        return std::unexpected<Error>(
             Error{ErrorCode::OverflowError, "Input is infinite."});
     }
 
     const double y = std::sqrt(x);
-
     if (!std::isfinite(y))
     {
-        return std::unexpected(
+        return std::unexpected<Error>(
             Error{ErrorCode::OverflowError, "sqrt result is infinite."});
     }
     return y;
@@ -131,25 +129,25 @@ int main()
         return 1;
     }
 
-    auto parsed = parseDouble(line);
-    if (!parsed)
-    {
-        std::cerr << label_for(parsed.error().code) << ": "
-                  << parsed.error().message << "\n";
-        return 1;
-    }
+    // THIS DOES NOT COMPILE on my Pi, but you can see it
+    // here  https://godbolt.org/z/aczKhaWa7
 
-    auto principal_root = safeSqrt(*parsed);
-    if (!principal_root)
+    auto result = parseDouble(line).and_then(safeSqrt);
+
+    if (!result)
     {
-        std::cerr << label_for(principal_root.error().code) << ": "
-                  << principal_root.error().message << "\n";
+        std::cerr << label_for(result.error().code) << ": "
+                  << result.error().message << "\n";
         return 1;
     }
 
     constexpr int precision = 12;
     std::cout.setf(std::ios::fixed);
     std::cout.precision(precision);
-    std::cout << "sqrt(" << *parsed << ") = " << *principal_root << "\n";
+    const auto parsed = parseDouble(line);
+    if (parsed)
+    {
+        std::cout << "sqrt(" << *parsed << ") = " << *result << "\n";
+    }
     return 0;
 }
