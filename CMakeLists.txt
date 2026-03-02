@@ -45,6 +45,10 @@ add_app(square       square.cpp)
 add_app(test_array   test_array.cpp)
 add_app(concat       concat.cpp)
 add_app(sqrtexcept   sqrtexcept.cpp)
+add_app(tidynull     tidynull.cpp)
+
+add_app(sqrtexpected  sqrtexpected.cpp)
+target_compile_options(sqrtexpected PRIVATE -std=c++23)
 
 # ---- Bring in tests from subdirectory ----
 add_subdirectory(tests)

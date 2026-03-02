@@ -31,4 +31,8 @@ add_test(NAME xmltest  COMMAND $<TARGET_FILE:xmltest>)
     NAME sqrtexcept:e2e:bash
     COMMAND bash "${CMAKE_SOURCE_DIR}/tests/sqrtexcept_test.sh" $<TARGET_FILE:sqrtexcept>
   )
+  add_test(
+    NAME sqrtexpected:e2e:bash
+    COMMAND bash "${CMAKE_SOURCE_DIR}/tests/sqrtexpected_test.sh" $<TARGET_FILE:sqrtexpected>
+  )
 
