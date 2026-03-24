@@ -47,6 +47,7 @@ add_app(concat       concat.cpp)
 add_app(sqrtexcept   sqrtexcept.cpp)
 add_app(access       access.cpp)
 add_app(access_private       access_private.cpp)
+add_app(access_crtp       access_crtp.cpp)
 
 add_app(sqrtexpected  sqrtexpected.cpp)
 target_compile_options(sqrtexpected PRIVATE -std=c++23)
