@@ -51,6 +51,7 @@ add_app(access_crtp       access_crtp.cpp)
 add_app(complex       complex.cpp)
 add_app(falsesharing falsesharing.cpp)
 add_app(queue_thread queue_thread.cpp)
+add_app(kt016-excercise3 kt016-exercise3.cpp)
 
 add_app(sqrtexpected  sqrtexpected.cpp)
 target_compile_options(sqrtexpected PRIVATE -std=c++23)

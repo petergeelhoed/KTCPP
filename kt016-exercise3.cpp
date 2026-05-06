@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include <optional>
+
 // Struct to hold one music track entry
 struct Track
 {
@@ -11,6 +13,20 @@ struct Track
     std::string album;
     std::string track;
 };
+
+// C++20 helper: getline that returns std::optional<std::string>
+std::optional<std::string> getline_opt(std::istream& is)
+{
+    std::string line;
+    if (std::getline(is, line))
+    {
+        return line;
+    }
+    else
+    {
+        return std::nullopt;
+    }
+}
 
 int main()
 {
@@ -24,23 +40,20 @@ int main()
     }
 
     std::vector<Track> tracks;
-    std::string line;
-
-    while (std::getline(file, line))
+    while (auto line_opt = getline_opt(file))
     {
-        std::istringstream ss(line);
-        std::string artist, album, track;
+        std::istringstream ss(*line_opt);
+        auto artist_opt = getline_opt(ss);
+        auto album_opt = getline_opt(ss);
+        auto track_opt = getline_opt(ss);
 
-        // Extract CSV fields (simple comma-separated parsing)
-        if (std::getline(ss, artist, ',') && std::getline(ss, album, ',') &&
-            std::getline(ss, track))
+        if (artist_opt && album_opt && track_opt)
         {
-
-            tracks.push_back(Track{artist, album, track});
+            tracks.push_back(Track{*artist_opt, *album_opt, *track_opt});
         }
         else
         {
-            std::cerr << "Skipping malformed line: " << line << '\n';
+            std::cerr << "Skipping malformed line: " << *line_opt << '\n';
         }
     }
 
