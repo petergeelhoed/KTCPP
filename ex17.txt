@@ -1,0 +1,19 @@
+1.
+// out is an output variable
+std::copy(v.begin(), v.end(), out.begin());
+
+std::FILE* is not RAII, nor is std::tm but that is a POD struct
+
+[[nodiscard]]
+std::unique returns the new end iterator, but that can be ignored.
+
+
+The rule of 0 or 5 is vilolated for C-style types
+
+2.
+In cuteconf we violate many but not manual memory management, 
+In old conf we do.
+
+We have clang-tidy to warn on nodiscard.
+
+Good example of the RAII is the TransactionContext, it manages the transaction and make sure it gets committed or rolled back when going out of scope. It follows te ruele of 5 by deleting the copy and move operations.
