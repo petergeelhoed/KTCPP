@@ -10,8 +10,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # For clangd/IDE integrations
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-add_library(greet STATIC greet.cpp)
+add_subdirectory(lib)
 add_executable(hello main.cpp)
 target_link_libraries(hello PRIVATE greet)
 
